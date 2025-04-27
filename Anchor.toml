@@ -11,7 +11,7 @@ gym_dapp_be = "98nD8KDJH5Vkov3a65xuPztmmk1eQHpdgR3Supk4RXb4"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "https://api.devnet.solana.com"
 wallet = "~/.config/solana/id.json"
 
 [scripts]

@@ -1,19 +1,37 @@
 #![allow(unexpected_cfgs)]
+pub mod error;
+pub mod constants;
+pub mod instructions;
+pub mod state;
+
 use anchor_lang::prelude::*;
-declare_id!("98nD8KDJH5Vkov3a65xuPztmmk1eQHpdgR3Supk4RXb4");
+pub use constants::*;
+pub use state::*;
+pub use instructions::*;
+pub use error::*;
+
+declare_id!("9akkfdTGrGZaavswyVC7jqBu3AsTBim634xuUhKSoYMr");
 
 #[program]
 pub mod gym_dapp_be {
-    use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Initializing the Gym Dapp");
-        let program_id = ctx.program_id;
-        let program_id_str = program_id.to_string();
-        msg!("Program ID: {}", program_id_str);
+    use super::*;
+    // Funcție pentru inițializarea contului utilizator
+    pub fn initialize_user_account(
+        ctx: Context<InitializeUserAccount>,
+        userid: String,
+        username: String,
+        email: String,
+        password: String,
+    ) -> Result<()> {
+        create_user_account(
+            ctx, 
+            userid,
+            username,
+            email,
+            password,
+        )?;
         Ok(())
     }
 }
 
-#[derive(Accounts)]
-pub struct Initialize {}
