@@ -3,7 +3,6 @@ use anchor_lang::prelude::*;
 use crate::{ Routine, Routines, ANCHOR_DISCRIMINATOR};
 
 
-
 #[derive(Accounts)]
 pub struct InitializeUserRoutines<'info> {
     #[account(mut)]
@@ -14,12 +13,12 @@ pub struct InitializeUserRoutines<'info> {
         payer = user,
         space = ANCHOR_DISCRIMINATOR + Routines::len(0),
         seeds = [
-            b"userroutines",
+            b"routines",
             user.key().as_ref(),
         ],
         bump,
     )]
-    pub userroutines: Account<'info, Routines>,
+    pub routines: Account<'info, Routines>,
     pub system_program: Program<'info, System>,
 }
 
@@ -27,20 +26,20 @@ pub struct InitializeUserRoutines<'info> {
 pub struct AddUserRoutine<'info> {
     #[account(mut)]
     pub user: Signer<'info>,
-
+    
     #[account(
         mut,
-        realloc = Routines::len(userroutines.routines.len() + 1),
+        realloc = Routines::len(routines.routines.len() + 1),
         realloc::payer = user,
         realloc::zero = true,
         seeds = [
-            b"userroutines",
+            b"routines",
             user.key().as_ref(),
-        ],
-        bump,
-    )]
-
-    pub userroutines: Account<'info, Routines>,
+            ],
+            bump,
+        )]
+        
+    pub routines: Account<'info, Routines>,
     pub system_program: Program<'info, System>,
 }
 
@@ -51,17 +50,17 @@ pub struct RemoveUserRoutine<'info> {
 
     #[account(
         mut,
-        realloc = Routines::len(userroutines.routines.len() - 1),
+        realloc = Routines::len(routines.routines.len() - 1),
         realloc::payer = user,
         realloc::zero = true,
         seeds = [
-            b"userroutines",
+            b"routines",
             user.key().as_ref(),
         ],
         bump,
     )]
 
-    pub userroutines: Account<'info, Routines>,
+    pub routines: Account<'info, Routines>,
     pub system_program: Program<'info, System>,
 }
 
@@ -70,11 +69,11 @@ pub fn create_user_routines(
     userid: String,
 ) -> Result<()> {
 
-    let userroutines = &mut ctx.accounts.userroutines;
-    userroutines.userid = userid;
+    let routines = &mut ctx.accounts.routines;
+    routines.userid = userid;
 
     msg!("User routines account initialized successfully!");
-    msg!("UserId: {}", ctx.accounts.userroutines.userid);
+    msg!("UserId: {}", ctx.accounts.routines.userid);
     Ok(())
 }
 
@@ -83,9 +82,9 @@ pub fn add_user_routine(
     routine: Routine
 ) -> Result<()> {
 
-    let userroutines = &mut ctx.accounts.userroutines;
+    let routines = &mut ctx.accounts.routines.routines;
 
-    userroutines.routines.push(routine);
+    routines.push(routine);
     
     Ok(())
 }
@@ -95,9 +94,9 @@ pub fn remove_user_routine(
     routineid: String,
 ) -> Result<()> {
 
-    let userroutines = &mut ctx.accounts.userroutines;
+    let routines = &mut ctx.accounts.routines.routines;
 
-    userroutines.routines.retain(|routine| routine.routineid != routineid);
+    routines.retain(|routine| routine.routineid != routineid);
 
     msg!("Routine with id {} removed successfully!", routineid);
     

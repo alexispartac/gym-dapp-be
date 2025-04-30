@@ -28,11 +28,11 @@ describe("gym-dapp-be", () => {
   //   const email = "testuser@example.com";
   //   const password = "securepassword";
 
-  //   // await program.methods
-  //   //   .initializeUserAccount(userid, username, email, password)
-  //   //   .signers([user])
-  //   //   .rpc();
-  //   // console.log("User account initialized");
+  //   await program.methods
+  //     .initializeUserAccount(userid, username, email, password)
+  //     .signers([user])
+  //     .rpc();
+  //   console.log("User account initialized");
 
   //   const userAccountPdaAndBump = await anchor.web3.PublicKey.findProgramAddress(
   //     [Buffer.from("useraccount"), user.publicKey.toBuffer()],
@@ -64,14 +64,14 @@ describe("gym-dapp-be", () => {
 
   //   const userid = '1';
     
-  //   // await program.methods
-  //   //   .initializeUserWorkouts(userid)
-  //   //   .signers([user])
-  //   //   .rpc();
-  //   // console.log("User workouts account initialized");
+  //   await program.methods
+  //     .initializeUserWorkouts(userid)
+  //     .signers([user])
+  //     .rpc();
+  //   console.log("User workouts account initialized");
 
   //   const userWorkoutsAccountPdaAndBump = await anchor.web3.PublicKey.findProgramAddress(
-  //     [Buffer.from("userworkouts"), user.publicKey.toBuffer()],
+  //     [Buffer.from("workouts"), user.publicKey.toBuffer()],
   //     program.programId
   //   );
 
@@ -108,7 +108,7 @@ describe("gym-dapp-be", () => {
   
   //   // Calculate the PDA for the user workouts account
   //   const [userWorkoutsAccountPda, _] = await anchor.web3.PublicKey.findProgramAddress(
-  //     [Buffer.from("userworkouts"), user.publicKey.toBuffer()],
+  //     [Buffer.from("workouts"), user.publicKey.toBuffer()],
   //     program.programId
   //   );
   
@@ -125,22 +125,16 @@ describe("gym-dapp-be", () => {
   
   //   // Assertions to verify the workout was added
   //   console.log("Updated User Workouts Data:", dataFromPda);
-  //   // const addedWorkout = dataFromPda.workouts.find((w: any) => w.workoutid === workout.workoutid);
-  //   // assert.isDefined(addedWorkout, "Workout should be added to the workouts list");
-  //   // assert.equal(addedWorkout.workoutid, workout.workoutid, "Workout ID should match");
-  //   // assert.equal(addedWorkout.date, workout.date, "Workout date should match");
-  //   // assert.equal(addedWorkout.duration, workout.duration, "Workout duration should match");
-  //   // assert.equal(addedWorkout.volume, workout.volume, "Workout volume should match");
   // });
   console.log(" ");
 
   // it("Remove workout from workouts user account by workoutid", async () => {
   //   // Define the workout ID to remove
-  //   const workoutid = "workout123";
+  //   const workoutid = "workout1";
   
   //   // Calculate the PDA for the user workouts account
   //   const [userWorkoutsAccountPda, _] = await anchor.web3.PublicKey.findProgramAddress(
-  //     [Buffer.from("userworkouts"), user.publicKey.toBuffer()],
+  //     [Buffer.from("workouts"), user.publicKey.toBuffer()],
   //     program.programId
   //   );
   
@@ -166,14 +160,14 @@ describe("gym-dapp-be", () => {
 
   //   const userid = '1';
     
-  //   // await program.methods
-  //   //   .initializeUserRoutine(userid)
-  //   //   .signers([user])
-  //   //   .rpc();
-  //   // console.log("User routines account initialized");
+  //   await program.methods
+  //     .initializeUserRoutine(userid)
+  //     .signers([user])
+  //     .rpc();
+  //   console.log("User routines account initialized");
 
   //   const userRoutinesAccountPdaAndBump = await anchor.web3.PublicKey.findProgramAddress(
-  //     [Buffer.from("userroutines"), user.publicKey.toBuffer()],
+  //     [Buffer.from("routines"), user.publicKey.toBuffer()],
   //     program.programId
   //   );
 
@@ -185,49 +179,43 @@ describe("gym-dapp-be", () => {
 
   // });
   
-  console.log(" ");
-  it("Add routine to routines user account", async () => {
-      // Define test data
-      const routine = {
-          routineid: "routine2",
-          name: "SecondRoutine",
-          exercises: [
-            {
-              id: "exercise1",
-              name: "Bench Press",
-              muscleGroup: "Chest",
-              sets: [
-                { setNumber: 1, kg: 100, reps: 10, previous: "90kg", done: true },
-                { setNumber: 2, kg: 100, reps: 8, previous: "90kg", done: true },
-              ],
-            },
-          ],
-      };
+  // console.log(" ");
+  // it("Add routine to routines user account", async () => {
+  //     // Define test data
+  //     const routine = {
+  //         routineid: "routine2",
+  //         name: "SecondRoutine",
+  //         exercises: [
+  //           {
+  //             id: "exercise1",
+  //             name: "Bench Press",
+  //             muscleGroup: "Chest",
+  //             sets: [
+  //               { setNumber: 1, kg: 100, reps: 10, previous: "90kg", done: true },
+  //               { setNumber: 2, kg: 100, reps: 8, previous: "90kg", done: true },
+  //             ],
+  //           },
+  //         ],
+  //     };
 
-      const [userRoutinesAccountPda, _] = await anchor.web3.PublicKey.findProgramAddress(
-        [Buffer.from("userroutines"), user.publicKey.toBuffer()],
-        program.programId
-      );
+  //     const [userRoutinesAccountPda, _] = await anchor.web3.PublicKey.findProgramAddress(
+  //       [Buffer.from("routines"), user.publicKey.toBuffer()],
+  //       program.programId
+  //     );
     
-      await program.methods
-        .addRoutine(routine)
-        .signers([user])
-        .rpc();
-    
-      console.log("Routine added to user routines account");
+  //     await program.methods
+  //       .addRoutine(routine)
+  //       .signers([user])
+  //       .rpc();
+
+  //     console.log("Routine added to user routines account");
     
 
-      const dataFromPda = await program.account.routines.fetch(userRoutinesAccountPda);
+  //     const dataFromPda = await program.account.routines.fetch(userRoutinesAccountPda);
     
-      // Assertions to verify the workout was added
-      console.log("Updated User Routines Data:", dataFromPda);
-      // const addedWorkout = dataFromPda.workouts.find((w: any) => w.workoutid === workout.workoutid);
-      // assert.isDefined(addedWorkout, "Workout should be added to the workouts list");
-      // assert.equal(addedWorkout.workoutid, workout.workoutid, "Workout ID should match");
-      // assert.equal(addedWorkout.date, workout.date, "Workout date should match");
-      // assert.equal(addedWorkout.duration, workout.duration, "Workout duration should match");
-      // assert.equal(addedWorkout.volume, workout.volume, "Workout volume should match");
-    });
+  //     // Assertions to verify the workout was added
+  //     console.log("Updated User Routines Data:", dataFromPda);
+  //   });
 
   console.log(" ");
   // it("Remove routine from routines user account by routineid", async () => {
@@ -235,7 +223,7 @@ describe("gym-dapp-be", () => {
   //   const routineid = "routine2";
 
   //   const [userRoutinesAccountPda, _] = await anchor.web3.PublicKey.findProgramAddress(
-  //     [Buffer.from("userroutines"), user.publicKey.toBuffer()],
+  //     [Buffer.from("routines"), user.publicKey.toBuffer()],
   //     program.programId
   //   );
   

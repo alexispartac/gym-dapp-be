@@ -12,12 +12,12 @@ pub struct InitializeUserWorkouts<'info> {
         payer = user,
         space = ANCHOR_DISCRIMINATOR + Workouts::len(0),
         seeds = [
-            b"userworkouts",
+            b"workouts",
             user.key().as_ref(),
         ],
         bump,
     )]
-    pub userworkouts: Account<'info, Workouts>,
+    pub workouts: Account<'info, Workouts>,
     pub system_program: Program<'info, System>,
 }
 
@@ -28,17 +28,17 @@ pub struct AddUserWorkout<'info> {
 
     #[account(
         mut,
-        realloc = Workouts::len(userworkouts.workouts.len() + 1),
+        realloc = Workouts::len(workouts.workouts.len() + 1),
         realloc::payer = user,
         realloc::zero = true,
         seeds = [
-            b"userworkouts",
+            b"workouts",
             user.key().as_ref(),
         ],
         bump,
     )]
 
-    pub userworkouts: Account<'info, Workouts>,
+    pub workouts: Account<'info, Workouts>,
     pub system_program: Program<'info, System>,
 }
 
@@ -49,17 +49,17 @@ pub struct RemoveUserWorkout<'info> {
 
     #[account(
         mut,
-        realloc = Workouts::len(userworkouts.workouts.len() - 1),
+        realloc = Workouts::len(workouts.workouts.len() - 1),
         realloc::payer = user,
         realloc::zero = true,
         seeds = [
-            b"userworkouts",
+            b"workouts",
             user.key().as_ref(),
         ],
         bump,
     )]
 
-    pub userworkouts: Account<'info, Workouts>,
+    pub workouts: Account<'info, Workouts>,
     pub system_program: Program<'info, System>,
 }
 
@@ -68,11 +68,11 @@ pub fn create_user_workouts(
     userid: String,
 ) -> Result<()> {
 
-    let userworkouts = &mut ctx.accounts.userworkouts;
-    userworkouts.userid = userid;
+    let workouts = &mut ctx.accounts.workouts;
+    workouts.userid = userid;
 
     msg!("User workouts account initialized successfully!");
-    msg!("UserId: {}", ctx.accounts.userworkouts.userid);
+    msg!("UserId: {}", ctx.accounts.workouts.userid);
     Ok(())
 }
 
@@ -81,9 +81,9 @@ pub fn add_user_workout(
     workout: Workout
 ) -> Result<()> {
 
-    let userworkouts = &mut ctx.accounts.userworkouts;
+    let workouts = &mut ctx.accounts.workouts.workouts;
 
-    userworkouts.workouts.push(workout);
+    workouts.push(workout);
     
     Ok(())
 }
@@ -93,9 +93,9 @@ pub fn remove_user_workout(
     workoutid: String,
 ) -> Result<()> {
 
-    let userworkouts = &mut ctx.accounts.userworkouts;
+    let workouts = &mut ctx.accounts.workouts.workouts;
 
-    userworkouts.workouts.retain(|workout| workout.workoutid != workoutid);
+    workouts.retain(|workout| workout.workoutid != workoutid);
 
     msg!("Workout with id {} removed successfully!", workoutid);
     
