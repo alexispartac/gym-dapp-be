@@ -13,8 +13,8 @@ import { LoginModal } from './pages/auth/LogIn';
 import { SignUpModal } from './pages/auth/SignUp';
 import { CheckBalance } from './pages/solana/check-balance';
 import { useUser } from './context/UserContext';
-import { UserNFT } from './pages/Wallet';
-import GetNFTs from './pages/solana/getNFTs';
+// import { UserNFT } from './pages/Wallet';
+// import GetNFTs from './pages/solana/getNFTs';
 
 
 const theme = createTheme({
@@ -50,13 +50,13 @@ function App() {
       }).catch(() => alert('Connect to the internet!'));
 
       // adauga asta in blockchain
-      GetNFTs({ pubkey: user.userInfo.publicKey }).then((NFTs: UserNFT[] | undefined) => {
-        if (NFTs && NFTs.length > 0) {
-          setNFT([NFTs[0]]); 
-        } else {
-          setNFT([]);
-        }
-      }).catch(() => console.error('Connect to the internet!'));
+      // GetNFTs({ pubkey: user.userInfo.publicKey }).then((NFTs: UserNFT[] | undefined) => {
+      //   if (NFTs && NFTs.length > 0) {
+      //     setNFT([NFTs[0]]); 
+      //   } else {
+      //     setNFT([]);
+      //   }
+      // }).catch(() => console.error('Connect to the internet!'));
     }
   }, [setBalance, setNFT, user.userInfo]);
 

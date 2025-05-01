@@ -16,7 +16,7 @@ import { addExercise, clearExercises, removeExercise } from "./workoutSlice";
 import { resetVolume } from "./volumeSlice";
 import { resetSets } from "./setsSlice";
 import { ExerciseProp, exercises, ExerciseCategory } from "../Exercises";
-import { WorkoutB, WorkoutExercisesProp } from "../Workout";
+import { ExerciseB, WorkoutB, WorkoutExercisesProp } from "../Workout";
 import { DiscardWorkoutModal, FinishWorkoutModal } from "./WorkoutModals";
 import { SECRET_KEY } from '../../constants'
 import { v4 as uuidv4 } from 'uuid';
@@ -32,20 +32,62 @@ const exercisesWorkout = exercises.map(
         }
     }
 )
-// toate exercitiile disponibile
-export const userExercises = exercises.map(
-    (exercise: ExerciseProp) => {
-        return {
-            ...exercise,
-            sets: [
-                { set_number: 1, kg: 5, reps: 20, previous: "3kg x 15", done: false },
-                { set_number: 2, kg: 6, reps: 18, previous: "3kg x 15", done: false },
-                { set_number: 3, kg: 7, reps: 15, previous: "3kg x 15", done: false }
-            ]
-        }
-    }
 
-)
+async function GetExercisesFromUserExercisesPDA(): Promise<ExerciseB[] | []> {
+    const connection = new anchor.web3.Connection("https://api.devnet.solana.com", "processed");
+    const wallet = (window as any).solana;
+    await wallet.connect();
+    const provider = new anchor.AnchorProvider(connection, wallet, {
+        preflightCommitment: "processed",
+    });
+
+    anchor.setProvider(provider);
+    const program: anchor.Program<GymDappBe> = new anchor.Program(idl as GymDappBe, provider);
+
+    try {
+        const exercisesAccountPdaAndBump = await anchor.web3.PublicKey.findProgramAddress(
+            [Buffer.from("exercises"), new PublicKey(wallet.publicKey).toBuffer()],
+            program.programId
+        )
+
+        const exercisesAccountPda = exercisesAccountPdaAndBump[0];
+        const userExercises: ExerciseB[] = (await program.account.exercises.fetch(exercisesAccountPda)).exercises;
+        console.log(userExercises, "get")
+        return userExercises;
+    } catch (error: any) {
+        console.error("Failed to get exercises", error);
+    }
+    return [];
+}
+
+
+export async function UserExercises() {
+    const exercisesFromUserAccount = await GetExercisesFromUserExercisesPDA();
+    return exercises.map(
+        (exercise: ExerciseProp) => {
+            const exerciseFromB = exercisesFromUserAccount.find((exerciseB: ExerciseB) => exerciseB.id === exercise.id );
+            if(exerciseFromB)
+                return {
+                    ...exercise,
+                    sets: exerciseFromB.sets.map(
+                        set => {
+                            return {...set, set_number: set.setNumber}
+                        }
+                    )
+                }
+            else
+                return {
+                    ...exercise,
+                    sets: [
+                        { set_number: 1, kg: 0, reps: 0, previous: "", done: false },
+                        { set_number: 2, kg: 0, reps: 0, previous: "", done: false },
+                        { set_number: 3, kg: 0, reps: 0, previous: "", done: false }
+                    ]
+                }
+        }
+    )
+}
+
 
 const WorkoutExercises = (
     { workoutExercises, setStatusWorkout, elapsedTimeRef, handleStop }:
@@ -85,8 +127,9 @@ const WorkoutExercises = (
     )
 
     // adaugam exercitii in workout si evidentiam in lista de exercitii disponibile
-    const handleAddExercise = (exercise: WorkoutExercisesProp) => {
+    const handleAddExercise = async(exercise: WorkoutExercisesProp) => {
         // am cautat in in lists de exercitii a utilizatorului daca exercitiul a mai fost facut, daca ad am luat seturile efectuate
+        const userExercises = await UserExercises();
         const sets = userExercises.find((ex) => ex.id === exercise.id)?.sets || [];
 
         if (!exercise.inWorkout) {
@@ -97,6 +140,7 @@ const WorkoutExercises = (
                         sets: sets,
                         inWorkout: true
                     }
+
                 }
                 return exerciseForWorkout;
             }))
@@ -151,7 +195,6 @@ const WorkoutExercises = (
             console.error("User information is missing");
             return;
         }
-
         const workoutPost = {
             workoutid: uuidv4(),
             exercises: exercisesWorkout.map((exercise: WorkoutExercisesProp) => ({
@@ -188,7 +231,6 @@ const WorkoutExercises = (
             const amount = Reward({ sets, volume });
             const senderKeypair: Keypair = Keypair.fromSecretKey(SECRET_KEY);
             await TransferSolana({ senderKeypair, recipientPubKey: new PublicKey(user.userInfo.publicKey), amountToSend: amount })
-            setLoading(false);
 
             const workoutsAccountPdaAndBump = await anchor.web3.PublicKey.findProgramAddress(
                 [Buffer.from("workouts"), new PublicKey(user.userInfo.publicKey).toBuffer()],
@@ -218,6 +260,82 @@ const WorkoutExercises = (
         } catch (error: any) {
             console.error("Failed to save workout:", error);
         }
+
+        async function saveExercise(exercise: WorkoutExercisesProp, exercisesAccountPda: any){
+            const saveExercise: ExerciseB= {
+                id: exercise.id,
+                name: exercise.name,
+                muscleGroup: exercise.muscleGroup,
+                sets: exercise.sets.map(
+                    set => {
+                        return {...set, setNumber: set.set_number, previous: `${set.kg}*${set.reps}`, done: false}
+                    }
+                )
+            }
+            try{
+                await program.methods
+                .addExercise(saveExercise)
+                .accountsPartial(
+                    {
+                      user: new PublicKey(user.userInfo.publicKey),
+                      exercises: exercisesAccountPda,
+                      systemProgram: anchor.web3.SystemProgram.programId,
+                    }
+                )
+                .rpc();
+            }catch(error: any) {
+                console.log("Error", error);
+            }
+        }
+
+        async function updateExercise(exercise: WorkoutExercisesProp, exercisesAccountPda: any){
+            const saveExercise: ExerciseB= {
+                id: exercise.id,
+                name: exercise.name,
+                muscleGroup: exercise.muscleGroup,
+                sets: exercise.sets.map(
+                    set => {
+                        return {...set, setNumber: set.set_number, previous: `${set.kg}*${set.reps}`, done: false}
+                    }
+                )
+            }
+            try{
+
+                await program.methods
+                .updateExercises(saveExercise)
+                .accountsPartial(
+                    {
+                      user: new PublicKey(user.userInfo.publicKey),
+                      exercises: exercisesAccountPda,
+                      systemProgram: anchor.web3.SystemProgram.programId,
+                    }
+                )
+                .rpc();
+            }catch(error: any) {
+                console.log("Error", error);
+            }
+        }
+
+        try {
+            const exercisesAccountPdaAndBump = await anchor.web3.PublicKey.findProgramAddress(
+                [Buffer.from("exercises"), new PublicKey(wallet.publicKey).toBuffer()],
+                program.programId
+            )
+            const exercisesAccountPda = exercisesAccountPdaAndBump[0];
+            const userExercises: ExerciseB[] = (await program.account.exercises.fetch(exercisesAccountPda)).exercises;
+
+            exercisesWorkout.forEach( exercise => {
+                const find = userExercises.find(exercisePDA => exercise.id === exercisePDA.id)
+                if(!find)
+                    saveExercise(exercise, exercisesAccountPda);
+                else
+                    updateExercise(exercise, exercisesAccountPda);
+            })
+
+        } catch (error: any) {
+            console.error("Failed", error);
+        }
+
     };
 
     const handleFinishWorkout = async (exercisesWorkout: WorkoutExercisesProp[]) => {
@@ -274,9 +392,9 @@ const WorkoutExercises = (
                 },
             });
         } else {
-            // modifica seturile pentru urmatoarele antrenamente
+            setLoading(true);
             handleDiscardWorkout();
-            handleSaveWorkoutInDB(exercisesWorkout).finally(
+            handleSaveWorkoutInDB(exercisesWorkout).finally(  
                 () => FinishWorkoutModal()
             );
             console.log("Congrats! Finish workout!", exercisesWorkout);
@@ -302,7 +420,6 @@ const WorkoutExercises = (
                     ))
             }
 
-            {/* lista cu exercitii  */}
             <Container>
                 <Modal
                     opened={opened}
@@ -348,7 +465,6 @@ const WorkoutExercises = (
                 </Modal>
             </Container>
 
-            {/* buton de adaugare exercitiu */}
             <Button
                 variant='outline'
                 color='blue'

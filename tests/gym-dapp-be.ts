@@ -179,7 +179,7 @@ describe("gym-dapp-be", () => {
 
   // });
   
-  // console.log(" ");
+  console.log(" ");
   // it("Add routine to routines user account", async () => {
   //     // Define test data
   //     const routine = {
@@ -241,5 +241,86 @@ describe("gym-dapp-be", () => {
   //   assert.isUndefined(removeRoutines, "Routine should be removed from the routines list");
   // });
 
+  console.log("");
+  // it("Initialize an user exercises account", async () => {
+  //   const userid = '1';
+    
+  //   await program.methods
+  //     .initializeUserExercises(userid)
+  //     .signers([user])
+  //     .rpc();
+  //   console.log("User exercises account initialized");
 
+  //   const userExercisesAccountPdaAndBump = await anchor.web3.PublicKey.findProgramAddress(
+  //     [Buffer.from("exercises"), user.publicKey.toBuffer()],
+  //     program.programId
+  //   );
+
+  //   const userExercisesAccountPda = userExercisesAccountPdaAndBump[0]; 
+  //   const dataFromPda = await program.account.exercises.fetch(userExercisesAccountPda);
+
+
+  //   console.log(dataFromPda);
+  // })
+
+  console.log("");
+  // it("Add exercise to exercises user account", async () => {
+  //     const exercise = {
+  //       id: "exercise1",
+  //       name: "Bench Press",
+  //       muscleGroup: "Chest",
+  //       sets: [
+  //         { setNumber: 1, kg: 100, reps: 10, previous: "90kg", done: true },
+  //         { setNumber: 2, kg: 100, reps: 8, previous: "90kg", done: true },
+  //       ],
+  //     }
+
+  //     const [userExercisesAccountPda, _] = await anchor.web3.PublicKey.findProgramAddress(
+  //       [Buffer.from("exercises"), user.publicKey.toBuffer()],
+  //       program.programId
+  //     );
+    
+  //     await program.methods
+  //       .addExercise(exercise)
+  //       .signers([user])
+  //       .rpc();
+
+  //     console.log("Exercise add to exercises user account");
+    
+
+  //     const dataFromPda = await program.account.exercises.fetch(userExercisesAccountPda);
+
+  //     console.log("Updated User Exercises Data:", dataFromPda);
+  // })
+
+  console.log("");
+  // it("Update exercise from exercises user account", async () => {
+  //   const exercise = {
+  //           id: "exercise1",
+  //           name: "Bench Press",
+  //           muscleGroup: "Chest",
+  //           sets: [
+  //             { setNumber: 1, kg: 100, reps: 10, previous: "100kg", done: true },
+  //             { setNumber: 2, kg: 100, reps: 10, previous: "100kg", done: true },
+  //           ],
+  //         }
+    
+  //   const [userExercisesAccountPda, _] = await anchor.web3.PublicKey.findProgramAddress(
+  //           [Buffer.from("exercises"), user.publicKey.toBuffer()],
+  //           program.programId
+  //         );
+        
+  //   await program.methods
+  //     .updateExercises(exercise)
+  //     .signers([user])
+  //     .rpc();
+
+  //   console.log("Exercise updated successfully");
+  
+
+  //   const dataFromPda = await program.account.exercises.fetch(userExercisesAccountPda);
+
+  //   console.log("Updated User Exercises Data:", dataFromPda);
+    
+  // })
 });

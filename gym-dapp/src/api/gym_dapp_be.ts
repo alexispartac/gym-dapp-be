@@ -14,6 +14,66 @@ export type GymDappBe = {
   },
   "instructions": [
     {
+      "name": "addExercise",
+      "discriminator": [
+        184,
+        42,
+        143,
+        241,
+        221,
+        150,
+        179,
+        154
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "exercises",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  120,
+                  101,
+                  114,
+                  99,
+                  105,
+                  115,
+                  101,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "exercise",
+          "type": {
+            "defined": {
+              "name": "exercise"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "addRoutine",
       "discriminator": [
         84,
@@ -197,6 +257,62 @@ export type GymDappBe = {
         },
         {
           "name": "password",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "initializeUserExercises",
+      "discriminator": [
+        234,
+        124,
+        110,
+        79,
+        235,
+        255,
+        23,
+        58
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "exercises",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  120,
+                  101,
+                  114,
+                  99,
+                  105,
+                  115,
+                  101,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "userid",
           "type": "string"
         }
       ]
@@ -420,9 +536,82 @@ export type GymDappBe = {
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "updateExercises",
+      "discriminator": [
+        237,
+        39,
+        47,
+        71,
+        86,
+        177,
+        11,
+        228
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "exercises",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  101,
+                  120,
+                  101,
+                  114,
+                  99,
+                  105,
+                  115,
+                  101,
+                  115
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "systemProgram",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "exercise",
+          "type": {
+            "defined": {
+              "name": "exercise"
+            }
+          }
+        }
+      ]
     }
   ],
   "accounts": [
+    {
+      "name": "exercises",
+      "discriminator": [
+        128,
+        230,
+        12,
+        229,
+        145,
+        44,
+        0,
+        86
+      ]
+    },
     {
       "name": "routines",
       "discriminator": [
@@ -519,6 +708,28 @@ export type GymDappBe = {
               "vec": {
                 "defined": {
                   "name": "set"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "exercises",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "userid",
+            "type": "string"
+          },
+          {
+            "name": "exercises",
+            "type": {
+              "vec": {
+                "defined": {
+                  "name": "exercise"
                 }
               }
             }

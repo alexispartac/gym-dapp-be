@@ -82,6 +82,7 @@ pub mod gym_dapp_be {
         Ok(())
     }
     
+    //
     pub fn add_routine(
         ctx: Context<AddUserRoutine>, // Folosește contextul 
         routine: Routine,
@@ -93,6 +94,7 @@ pub mod gym_dapp_be {
         Ok(())
     }
 
+    //
     pub fn remove_routine(
         ctx: Context<RemoveUserRoutine>, // Folosește contextul 
         routineid: String,
@@ -101,6 +103,44 @@ pub mod gym_dapp_be {
             ctx, 
             routineid
         )?;
+        Ok(())
+    }
+
+    //
+    pub fn initialize_user_exercises(
+        ctx: Context<InitializeUserExercises>,
+        userid: String,
+    ) -> Result<()> {
+        create_user_exercises(
+            ctx, 
+            userid
+        )?;
+        Ok(())
+    }
+
+    //
+    pub fn update_exercises(
+        ctx: Context<UpdateUserExercises>,
+        exercise: Exercise
+    ) -> Result<()> {
+        update_user_exercises(
+            ctx, 
+            exercise
+        )?;
+
+        Ok(())
+    }
+
+    //
+    pub fn add_exercise(
+        ctx: Context<AddUserExercise>,
+        exercise: Exercise
+    ) -> Result<()> {
+        add_user_exercise(
+            ctx, 
+            exercise
+        )?;
+
         Ok(())
     }
 

@@ -4,7 +4,7 @@ import React from "react";
 import { useMediaQuery } from "@mantine/hooks";
 import { useSelector, useDispatch } from "react-redux";
 import { Button, Container, Group, Modal, Stack } from "@mantine/core";
-import WorkoutExercises, { userExercises }  from "../new-workout/WorkoutExercises";
+import WorkoutExercises, { UserExercises }  from "../new-workout/WorkoutExercises";
 import { Sets, Timer, Volume } from "../new-workout/NewWorkout";
 import { addExercise, clearExercises } from "../new-workout/workoutSlice";
 import { RoutineB, RoutineExerciseProp, RoutineProp } from "../Routines";
@@ -128,10 +128,11 @@ const Routine = ({ routine, setRoutinesList }: { routine: RoutineProp, setRoutin
     }
     };
 
-    const handleAddWorkout = () => {
+    const handleAddWorkout = async() => {
+        const exercisesSave = await UserExercises();
         routine.exercises.forEach((routineExercise: RoutineExerciseProp) => {
             const { inRoutine, ...rest } = routineExercise; 
-            const userExercise = userExercises.find((exercise) => exercise.name === routineExercise.name);
+            const userExercise = exercisesSave.find((exercise) => exercise.name === routineExercise.name);
             if(userExercise)
             dispatch(addExercise({...rest, inWorkout: true, sets: userExercise.sets}));
         });
